@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IA generativa en moda: módulo interactivo</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Chosen Palette: Warm Neutrals & Tech Accents -->
+    <!-- Background: Stone/Warm Gray (Natural, organic feel of fabric) -->
+    <!-- Primary Text: Dark Charcoal (Readability) -->
+    <!-- Accent: Digital Lavender/Indigo (Represents the AI/Tech layer) -->
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'fashion-bg': '#fafaf9', // stone-50
+                        'fashion-surface': '#ffffff',
+                        'fashion-text': '#1c1917', // stone-900
+                        'fashion-accent': '#6366f1', // indigo-500
+                        'fashion-secondary': '#a8a29e', // stone-400
+                    },
+                    fontFamily: {
+                        sans: ['Fira Sans', 'Helvetiva', 'Arial', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Titulos */
+        h2 {
+            text-transform: capitalize;
+        }
+        .text
+        /* Chart Container Styling - MANDATORY */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px; /* Max width to prevent stretching */
+            margin-left: auto;
+            margin-right: auto;
+            height: 400px; /* Default height */
+            max-height: 500px;
+        }
+        @media (max-width: 640px) {
+            .chart-container {
+                height: 300px;
+            }
+        }
+
+        /* Custom Scrollbar for a cleaner look */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d6d3d1; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a8a29e; 
+        }
+
+        .step-active {
+            border-bottom: 3px solid #6366f1;
+            color: #1c1917;
+            font-weight: bold;
+        }
+        .step-inactive {
+            border-bottom: 3px solid #e7e5e4;
+            color: #a8a29e;
+        }
+    </style>
+</head>
+<body class="bg-fashion-bg text-fashion-text font-sans antialiased leading-relaxed">
+
+    <!-- Application Structure Plan: 
+         1. Hero Header: Contextualizes the topic (AI in Fashion).
+         2. Fundamentals Dashboard: Cards explaining AI Types & LLMs.
+         3. Workflow Interactive: A step-by-step interactive component to explore the 4 phases of AI+CAD design.
+         4. Impact Analysis: A chart visualizing the shift in design time/effort (Human vs AI).
+         5. Prompt Architect: An input-based "Lab" to practice the 5-part prompt structure.
+         6. Ethics & Legal: Information cards on IP and Transparency.
+         7. Footer: Bibliography.
+         
+         Why: This structure moves from Theory -> Process -> Practice -> Critical Thinking, aligned with the pedagogical goals.
+    -->
+
+    <!-- Navbar -->
+    <nav class="sticky top-0 z-50 bg-fashion-surface/90 backdrop-blur-md border-b border-stone-200 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center">
+                    <span class="text-2xl mr-2">🧵</span>
+                    <span class="font-bold text-xl tracking-tight">Fashion<span class="text-fashion-accent">AI</span> Lab</span>
+                </div>
+                <div class="hidden md:flex space-x-8">
+                    <a href="#fundamentos" class="hover:text-fashion-accent transition-colors">Fundamentos</a>
+                    <a href="#workflow" class="hover:text-fashion-accent transition-colors">Flujo de trabajo</a>
+                    <a href="#prompting" class="hover:text-fashion-accent transition-colors">Prompt lab</a>
+                    <a href="#etica" class="hover:text-fashion-accent transition-colors">Ética & Legal</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="bg-white border-b border-stone-200">
+        <div class="max-w-5xl mx-auto px-4 py-16 sm:px-6 lg:px-8 text-center">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-stone-900 mb-4">
+                La nueva co-diseñadora: <br/>
+                <span class="text-fashion-accent">Inteligencia Artificial Generativa</span>
+            </h1>
+            <p class="text-xl text-stone-600 max-w-2xl mx-auto mb-8">
+                Una guía interactiva sobre innovación, ética y técnica en el sistema moda. Explora cómo los algoritmos transforman el boceto en prenda.
+            </p>
+            <div class="flex justify-center gap-4 text-sm text-stone-500">
+                <span class="px-3 py-1 bg-stone-100 rounded-full">Diseño Digital I / II</span>
+                <span class="px-3 py-1 bg-stone-100 rounded-full">Actualizado: 2026</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-24">
+
+        <!-- SECTION 1: FUNDAMENTOS -->
+        <!-- Visualization Choices: Info Cards with clear typography to distinguish predictive vs generative. -->
+        <section id="fundamentos" class="scroll-mt-24">
+            <div class="mb-8">
+                <h2 class="text-3xl font-bold mb-4 border-l-4 border-fashion-accent pl-4">Fundamentos del motor creativo</h2>
+                <p class="text-lg text-stone-600">
+                    Antes de diseñar, debemos entender la herramienta. La IA no es magia; es computación simulando inteligencia. En moda, utilizamos principalmente dos tipos.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Card 1 -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200 hover:shadow-md transition-shadow">
+                    <div class="text-3xl mb-4">🧠</div>
+                    <h3 class="text-xl font-bold mb-2">IA predictiva</h3>
+                    <p class="text-stone-600 text-sm mb-4">
+                        Analiza el pasado para prever el futuro.
+                    </p>
+                    <ul class="text-sm text-stone-500 space-y-2">
+                        <li class="flex items-start"><span class="mr-2 text-fashion-accent">●</span> Predicción de stock</li>
+                        <li class="flex items-start"><span class="mr-2 text-fashion-accent">●</span> Análisis de tendencias de consumo</li>
+                        <li class="flex items-start"><span class="mr-2 text-fashion-accent">●</span> Optimización logística</li>
+                    </ul>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="bg-white p-6 rounded-xl shadow-md border-l-4 border-fashion-accent transform scale-105">
+                    <div class="text-3xl mb-4">🎨</div>
+                    <h3 class="text-xl font-bold mb-2">IA generativa</h3>
+                    <p class="text-stone-600 text-sm mb-4">
+                        El foco de este módulo. Crea contenido nuevo a partir de patrones aprendidos.
+                    </p>
+                    <ul class="text-sm text-stone-500 space-y-2">
+                        <li class="flex items-start"><span class="mr-2 text-fashion-accent">●</span> Generación de estampados (Prints)</li>
+                        <li class="flex items-start"><span class="mr-2 text-fashion-accent">●</span> Creación de siluetas nuevas</li>
+                        <li class="flex items-start"><span class="mr-2 text-fashion-accent">●</span> Variaciones de color y textura</li>
+                    </ul>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200 hover:shadow-md transition-shadow">
+                    <div class="text-3xl mb-4">💬</div>
+                    <h3 class="text-xl font-bold mb-2">LLMs (Modelos de Lenguaje)</h3>
+                    <p class="text-stone-600 text-sm mb-4">
+                        Modelos como GPT o Gemini que entienden el lenguaje humano.
+                    </p>
+                    <ul class="text-sm text-stone-500 space-y-2">
+                        <li class="flex items-start"><span class="mr-2 text-fashion-accent">●</span> Redacción de fichas técnicas</li>
+                        <li class="flex items-start"><span class="mr-2 text-fashion-accent">●</span> Análisis de reportes de tendencias</li>
+                        <li class="flex items-start"><span class="mr-2 text-fashion-accent">●</span> Asistencia en creación de Prompts</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: IMPACT & CHART -->
+        <!-- Visualization Choices: Bar Chart to compare Traditional vs AI workflow time distribution.
+             Goal: Show "Reduction of time" vs "Technical Validation" needs. -->
+        <section class="bg-white p-8 rounded-2xl shadow-sm border border-stone-100">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+                <div class="lg:col-span-1">
+                    <h2 class="text-3xl font-bold mb-4">Impacto en el proceso</h2>
+                    <p class="text-stone-600 mb-6">
+                        Según <strong>Monterosso & Palazzetti (2024)</strong>, la IA transforma radicalmente dónde invierte su tiempo el diseñador.
+                    </p>
+                    <div class="space-y-4">
+                        <div class="p-4 bg-fashion-bg rounded-lg border border-stone-200">
+                            <h4 class="font-bold text-fashion-accent">Iteración rápida</h4>
+                            <p class="text-sm text-stone-600">Se reduce el tiempo de dibujo manual y búsqueda de referencias.</p>
+                        </div>
+                        <div class="p-4 bg-fashion-bg rounded-lg border border-stone-200">
+                            <h4 class="font-bold text-fashion-accent">Validación técnica</h4>
+                            <p class="text-sm text-stone-600">Aumenta el tiempo necesario para traducir la "fantasía" de la IA a patrones construibles.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="lg:col-span-2 flex flex-col justify-center">
+                    <h3 class="text-center text-sm font-semibold text-stone-500 mb-4 uppercase tracking-wide">Distribución Estimada del Tiempo de Diseño</h3>
+                    <div class="chart-container">
+                        <canvas id="impactChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: WORKFLOW INTERACTIVE -->
+        <!-- Visualization Choices: Stepper/Tabs UI. Allows users to focus on one stage at a time. -->
+        <section id="workflow" class="scroll-mt-24">
+            <div class="mb-8 text-center">
+                <h2 class="text-3xl font-bold mb-4">El flujo de trabajo: IA + CAD</h2>
+                <p class="text-stone-600 max-w-2xl mx-auto">
+                    ¿Cómo integramos estas herramientas sin perder la calidad técnica? Navega por las etapas para ver el rol del humano y la máquina.
+                </p>
+            </div>
+
+            <!-- Tabs Navigation -->
+            <div class="flex flex-wrap justify-center mb-8 border-b border-stone-200">
+                <button onclick="switchTab('step1')" id="tab-step1" class="step-active px-6 py-3 text-lg transition-all focus:outline-none">
+                    1. Inspiración (IA)
+                </button>
+                <button onclick="switchTab('step2')" id="tab-step2" class="step-inactive px-6 py-3 text-lg transition-all focus:outline-none">
+                    2. Traducción (Humano)
+                </button>
+                <button onclick="switchTab('step3')" id="tab-step3" class="step-inactive px-6 py-3 text-lg transition-all focus:outline-none">
+                    3. Simulación (CAD)
+                </button>
+                <button onclick="switchTab('step4')" id="tab-step4" class="step-inactive px-6 py-3 text-lg transition-all focus:outline-none">
+                    4. Producción
+                </button>
+            </div>
+
+            <!-- Tab Content -->
+            <div id="step-content" class="bg-white p-8 rounded-2xl shadow-lg min-h-[300px] flex items-center border border-stone-100 relative overflow-hidden">
+                <!-- Background Decoration -->
+                <div class="absolute top-0 right-0 -mt-10 -mr-10 w-64 h-64 bg-fashion-accent/5 rounded-full blur-3xl"></div>
+
+                <!-- Dynamic Content Container -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 w-full relative z-10">
+                    <div class="flex flex-col justify-center">
+                        <h3 id="step-title" class="text-2xl font-bold mb-4 text-fashion-accent">Generación de concepto</h3>
+                        <p id="step-desc" class="text-lg text-stone-700 mb-6">
+                            Utilizamos Midjourney o DALL-E para generar variaciones rápidas de texturas, siluetas y combinaciones de color. El objetivo es la exploración, no el producto final.
+                        </p>
+                        <div class="bg-stone-50 p-4 rounded-lg border-l-4 border-stone-400">
+                            <p id="step-tip" class="text-sm italic text-stone-600">
+                                Tip: Generar 50 variaciones en menor tiempo que tomaría dibujar 3 bocetos a mano.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-center bg-stone-100 rounded-xl p-8">
+                        <div id="step-icon" class="text-9xl opacity-80">✨</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: PROMPT LAB -->
+        <!-- Visualization Choices: Form inputs mapping to the 5-part structure explained in the report. Real-time concatenation. -->
+        <section id="prompting" class="scroll-mt-24 bg-stone-900 text-stone-100 py-16 px-4 sm:px-8 rounded-3xl my-12 relative overflow-hidden">
+            <div class="max-w-4xl mx-auto relative z-10">
+                <div class="text-center mb-10">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-2">Laboratorio de Prompting</h2>
+                    <p class="text-stone-400">Basado en la estructura de <em>Peiro (2026)</em>. Construye el prompt perfecto.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Input Section -->
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs uppercase tracking-wider text-stone-500 mb-1">1. Rol</label>
+                            <input type="text" id="p-role" placeholder="Ej: Eres un experto patronista..." class="w-full bg-stone-800 border border-stone-700 rounded p-3 text-stone-200 focus:border-fashion-accent focus:outline-none transition-colors">
+                        </div>
+                        <div>
+                            <label class="block text-xs uppercase tracking-wider text-stone-500 mb-1">2. Contexto/Acción</label>
+                            <input type="text" id="p-context" placeholder="Ej: Diseña una chaqueta técnica gorpcore..." class="w-full bg-stone-800 border border-stone-700 rounded p-3 text-stone-200 focus:border-fashion-accent focus:outline-none transition-colors">
+                        </div>
+                        <div>
+                            <label class="block text-xs uppercase tracking-wider text-stone-500 mb-1">3. Detalles Técnicos</label>
+                            <input type="text" id="p-tech" placeholder="Ej: Textura ripstop, costuras termoselladas..." class="w-full bg-stone-800 border border-stone-700 rounded p-3 text-stone-200 focus:border-fashion-accent focus:outline-none transition-colors">
+                        </div>
+                        <div>
+                            <label class="block text-xs uppercase tracking-wider text-stone-500 mb-1">4. Estilo/Formato</label>
+                            <input type="text" id="p-style" placeholder="Ej: Render fotorealista, iluminación de estudio..." class="w-full bg-stone-800 border border-stone-700 rounded p-3 text-stone-200 focus:border-fashion-accent focus:outline-none transition-colors">
+                        </div>
+                        <div>
+                            <label class="block text-xs uppercase tracking-wider text-stone-500 mb-1">5. Restricciones</label>
+                            <input type="text" id="p-restrict" placeholder="Ej: Sin personas, fondo blanco sólido..." class="w-full bg-stone-800 border border-stone-700 rounded p-3 text-stone-200 focus:border-fashion-accent focus:outline-none transition-colors">
+                        </div>
+                        <button onclick="generatePrompt()" class="w-full bg-fashion-accent hover:bg-indigo-500 text-white font-bold py-3 rounded mt-4 transition-colors shadow-lg shadow-indigo-500/30">
+                            Generar prompt estructurado
+                        </button>
+                    </div>
+
+                    <!-- Output Section -->
+                    <div class="bg-stone-800 p-6 rounded-xl border border-stone-700 flex flex-col h-full">
+                        <h4 class="text-stone-400 text-sm uppercase mb-4">Resultado final</h4>
+                        <div id="prompt-output" class="flex-grow font-mono text-sm leading-relaxed text-stone-300 italic whitespace-pre-wrap bg-stone-900/50 p-4 rounded border border-dashed border-stone-600">
+                            Tu prompt aparecerá aquí...
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-stone-700 text-xs text-stone-500 flex justify-between">
+                            <span>Tokens estimados: <span id="token-count">0</span></span>
+                            <span>Modelo sugerido: Midjourney v6 / DALL-E 3 / Gemini 3</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 5: ETHICS & LEGAL -->
+        <!-- Visualization Choices: Comparison layout for Legal Dilemma vs Recommendation. -->
+        <section id="etica" class="scroll-mt-24">
+            <div class="mb-8">
+                <h2 class="text-3xl font-bold mb-4 border-l-4 border-fashion-accent pl-4">5. Ética y Propiedad Intelectual</h2>
+                <p class="text-lg text-stone-600">
+                    Un gran poder conlleva una gran responsabilidad legal. Análisis basado en <em>Niyompatama & Lapatoura (2025)</em>.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Legal Challenge -->
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-stone-200">
+                    <div class="flex items-center mb-6">
+                        <span class="text-3xl mr-4">⚖️</span>
+                        <h3 class="text-xl font-bold">El Dilema del Copyright</h3>
+                    </div>
+                    <div class="space-y-4">
+                        <p class="text-stone-700"><strong>¿Quién es el autor?</strong> La jurisprudencia actual establece que las imágenes generadas puramente por IA <em>no</em> tienen copyright automático.</p>
+                        <div class="bg-red-50 p-4 rounded-lg text-red-800 text-sm border border-red-100">
+                            <strong>Riesgo:</strong> Si usas la imagen cruda de la IA, cualquiera puede copiarla legalmente.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Solution -->
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-stone-200">
+                    <div class="flex items-center mb-6">
+                        <span class="text-3xl mr-4">✅</span>
+                        <h3 class="text-xl font-bold">La solución: intervención humana</h3>
+                    </div>
+                    <div class="space-y-4">
+                        <p class="text-stone-700">Para proteger tu diseño, debes demostrar una <strong>"Contribución Humana Significativa"</strong>.</p>
+                        <ul class="space-y-2 text-sm text-stone-600">
+                            <li class="flex items-start">1. Edición sustancial en Inkscape, Illustrator, Corel, Gimp, Photoshop u otro.</li>
+                            <li class="flex items-start">2. Traducción técnica a patrones en CLO 3D.</li>
+                            <li class="flex items-start">3. Selección curada y modificación creativa.</li>
+                        </ul>
+                        <div class="bg-green-50 p-4 rounded-lg text-green-800 text-sm border border-green-100">
+                            <strong>Consejo:</strong> Documenta todo tu proceso (captura pantallas, bocetos previos) como evidencia.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer / Bibliography -->
+        <footer class="mt-24 border-t border-stone-200 pt-12 pb-8">
+            <div class="max-w-4xl mx-auto text-center">
+                <h4 class="font-bold text-stone-900 mb-6">Fuentes Académicas & Referencias</h4>
+                <ul class="text-sm text-stone-500 space-y-2 text-left inline-block">
+                    <li>📖 <strong>Niyompatama, M., & Lapatoura, I. (2025).</strong> <em>Generative AI in fashion design creation: a copyright analysis.</em> Journal of Intellectual Property Law & Practice.</li>
+                    <li>📖 <strong>Monterosso, G., & Palazzetti Romualdi, F. (2024).</strong> <em>Analysis of the role... of Generative AI Models in the Fashion Design Process.</em> Politécnico de Milán.</li>
+                    <li>📖 <strong>Peiro, E. (2026).</strong> <em>Estructura de un Prompt Perfecto: Guía Definitiva.</em> Aprender21.</li>
+                </ul>
+                <p class="mt-8 text-xs text-stone-400">Desarrollado para Diseño Digital I/II • Herramienta de Apoyo Docente</p>
+            </div>
+        </footer>
+
+    </main>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // --- 1. Workflow Interactive Logic ---
+        const steps = {
+            'step1': {
+                title: '1. Inspiración (IA generativa)',
+                desc: 'Utilizamos Midjourney o DALL-E para generar variaciones rápidas. No buscamos el producto final, sino "semillas visuales". La IA actúa como un motor de divergencia creativa, proponiendo combinaciones de materiales y formas que quizás no hubiéramos imaginado.',
+                tip: 'Tip: Genera 50 variaciones en el tiempo que tomaría dibujar 3 bocetos a mano.',
+                icon: '✨'
+            },
+            'step2': {
+                title: '2. Traducción técnica (intervención humana)',
+                desc: 'Fase crítica. El diseñador toma la imagen de la IA (que suele tener errores estructurales) y la "traduce" a la realidad. Se definen costuras reales, sistemas de cierre y factibilidad textil. Aquí es donde se aporta la "Contribución Humana Significativa" para el copyright.',
+                tip: 'Tip: No des por válidas las alucinaciones de la IA (ej. bolsillos sin abertura); corrígelas.',
+                icon: '✏️'
+            },
+            'step3': {
+                title: '3. Simulación y patronaje (CAD)',
+                desc: 'Uso de software como CLO 3D, Optitex o Browzwear. Se crea la moldería digital basándose en la traducción técnica. Se simula la caída de la tela, la presión sobre el cuerpo y se ajusta el calce (fitting) en un avatar virtual.',
+                tip: 'Tip: Usa el mapa de tensión de CLO 3D para verificar que la prenda sea cómoda.',
+                icon: '💻'
+            },
+            'step4': {
+                title: '4. Producción y ficha técnica',
+                desc: 'Generación de la documentación final para taller. La IA (LLMs) puede ayudar a redactar la descripción comercial, pero las medidas y consumos salen del software CAD. Se imprime el patrón o se envía a corte automático.',
+                tip: 'Tip: La sostenibilidad aumenta al reducir muestras físicas fallidas.',
+                icon: '🏭'
+            }
+        };
+
+        function switchTab(stepKey) {
+            // Update Tab Styles
+            ['step1', 'step2', 'step3', 'step4'].forEach(key => {
+                const btn = document.getElementById('tab-' + key);
+                if (key === stepKey) {
+                    btn.classList.remove('step-inactive');
+                    btn.classList.add('step-active');
+                } else {
+                    btn.classList.remove('step-active');
+                    btn.classList.add('step-inactive');
+                }
+            });
+
+            // Update Content with simple animation
+            const contentDiv = document.getElementById('step-content');
+            contentDiv.classList.add('opacity-50');
+            
+            setTimeout(() => {
+                const data = steps[stepKey];
+                document.getElementById('step-title').innerText = data.title;
+                document.getElementById('step-desc').innerText = data.desc;
+                document.getElementById('step-tip').innerText = data.tip;
+                document.getElementById('step-icon').innerText = data.icon;
+                contentDiv.classList.remove('opacity-50');
+            }, 150);
+        }
+
+        // --- 2. Prompt Lab Logic ---
+        function generatePrompt() {
+            const role = document.getElementById('p-role').value.trim();
+            const context = document.getElementById('p-context').value.trim();
+            const tech = document.getElementById('p-tech').value.trim();
+            const style = document.getElementById('p-style').value.trim();
+            const restrict = document.getElementById('p-restrict').value.trim();
+
+            let finalPrompt = "";
+            if (role) finalPrompt += `[ROL]: ${role}\n`;
+            if (context) finalPrompt += `[ACCIÓN]: ${context}\n`;
+            if (tech) finalPrompt += `[DETALLES]: ${tech}\n`;
+            if (style) finalPrompt += `[ESTILO]: ${style}\n`;
+            if (restrict) finalPrompt += `[NEGATIVO/RESTRICCIONES]: --no ${restrict}`;
+
+            if (finalPrompt === "") {
+                finalPrompt = "Por favor, completa al menos un campo para generar la estructura.";
+            }
+
+            document.getElementById('prompt-output').innerText = finalPrompt;
+            document.getElementById('token-count').innerText = finalPrompt.split(" ").length;
+        }
+
+        // --- 3. Chart.js Initialization ---
+        document.addEventListener('DOMContentLoaded', function() {
+            const ctx = document.getElementById('impactChart').getContext('2d');
+            
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Investigación/Concepto', 'Dibujo/Bocetado', 'Traducción Técnica', 'Prototipado/Simulación'],
+                    datasets: [
+                        {
+                            label: 'Método Tradicional',
+                            data: [30, 40, 10, 20],
+                            backgroundColor: '#e7e5e4', // stone-200
+                            borderColor: '#a8a29e',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Método con IA + CAD',
+                            data: [10, 10, 50, 30], // Less concept time, massive technical translation time
+                            backgroundColor: '#6366f1', // indigo-500
+                            borderColor: '#4338ca',
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + context.raw + '% del tiempo';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: '% Tiempo Estimado'
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+    
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. All visuals are CSS, Unicode, or Canvas. -->
+</body>
+</html>
